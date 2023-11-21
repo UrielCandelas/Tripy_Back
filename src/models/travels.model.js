@@ -27,7 +27,7 @@ const Travel = sequelize.define(
       allowNull: false,
     },
     travel_date: {
-      type: DataTypes.CHAR(20),
+      type: DataTypes.DATE,
       allowNull: false,
     },
     id_transportation: {

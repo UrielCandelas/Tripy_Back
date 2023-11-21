@@ -5,7 +5,7 @@ import Extra from '../models/extraComment.model.js'
 import Expenses from '../models/expenses.model.js'
 
 export const registerNewTravel = async (req, res) => {
-  const { id_user1, id_location, travel_date, id_transportation, quantity, extra, companions} =
+  const { id_user1, id_location, travel_date, id_transportation,expense, quantity, extra, companions} =
     req.body
     let expenseSaved;
     let extraSaved;
@@ -18,7 +18,7 @@ export const registerNewTravel = async (req, res) => {
     if (quantity) {
       const newExpense = Expenses.build({
         id_user1,
-        expense: "Aproximado",
+        expense,
         quantity
       })
        expenseSaved = await newExpense.save()
@@ -35,10 +35,20 @@ export const registerNewTravel = async (req, res) => {
       travel_date,
       id_transportation,
       id_expenses: expenseSaved ? expenseSaved.id : null,
-      id_extra: extraSaved ? extraSaved.id : null,
+      id_extras: extraSaved ? extraSaved.id : null,
       companions,
     })
     const travelSaved = await newTravel.save()
+    const addID = await Expenses.update(
+      {
+        id_travel: travelSaved.id,
+      },
+      {
+        where: {
+          id: travelSaved.id_expenses,
+        },
+      }
+    )
     res.status(200).json({
       id: travelSaved.id,
       id_user1: travelSaved.id_user1,
@@ -234,4 +244,13 @@ export const getSharedTravel = async (req, res) => {
   }
 }
 
+export const getAllLocationTravels = async (req, res) => {
+  const { id } = req.params
+  try {
+    const travels = await Travel.findAll({ where: { id_location: id } })
+    res.status(200).json(travels)
+  } catch (error) {
+    res.status(500).json([`Ha ocurrido un error: ${error.message}`])
+  }
+}
 

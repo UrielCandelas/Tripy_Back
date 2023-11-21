@@ -15,6 +15,8 @@ import authRoutes from "./routes/auth.routes.js";
 import locationRoutes from "./routes/locations.routes.js";
 import travelRoutes from "./routes/travels.routes.js"
 import transportsRoutes from "./routes/transports.routes.js"
+import usersRoutes from "./routes/users.routes.js"
+import expensesRoutes from "./routes/expenses.routes.js"
 
 //Se crea una constante de express
 const app = express();
@@ -42,8 +44,10 @@ app.use(express.json());
 //Se usan los modulos de la app
 app.use("/api", authRoutes);
 app.use("/api", locationRoutes);
-app.use("/api", travelRoutes)
+app.use("/api", travelRoutes);
 app.use("/api", transportsRoutes);
+app.use("/api", usersRoutes);
+app.use("/api", expensesRoutes);
 
 /*io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);

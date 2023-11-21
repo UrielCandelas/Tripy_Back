@@ -17,6 +17,9 @@ const Expenses = sequelize.define(
     id_user2: {
       type: DataTypes.INTEGER,
     },
+    id_travel: {
+      type: DataTypes.INTEGER,
+    },
     expense: {
         type: DataTypes.CHAR(20),
         allowNull: false,

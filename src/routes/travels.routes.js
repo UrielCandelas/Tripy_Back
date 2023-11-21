@@ -14,6 +14,7 @@ import {
   deleteTravel,
   getMyTravel,
   getSharedTravel,
+  getAllLocationTravels
 } from '../controllers/travels.controller.js'
 
 const router = Router()
@@ -25,6 +26,7 @@ router.get('/travels/shared/:id', getSharedTravels)
 router.get('/travels/shared/one/:id', getSharedTravel)
 router.put('/travels/shared/:id', addSecondUser)
 router.put('/travels/secondShared/:id', deleteSecondUser)
+router.get('/travels/location/:id', getAllLocationTravels)
 
 // Mis Viajes
 router.get('/my-travels/', getMyTravels)

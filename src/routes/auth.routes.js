@@ -18,11 +18,12 @@ router.post('/login',validateSchema(loginSchema), login);
 //Se desloguea el usuario
 router.post('/logout', logout);
 //Se obtiene el perfil del usuario sin antes verificar que ya este logueado 
-router.get('/profile', authRequired, profile);
+
 //Se verifica si el token es valido
 router.get('/auth/verify', verifyToken)
 
 router.post('/auth/verifyMobile', verifyTokenMovil)
+
 
 //Exporta router y todos sus metodos
 export default router
