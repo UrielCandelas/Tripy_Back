@@ -10,7 +10,8 @@ const sequelize = new Sequelize({
     username: userName,
     password: password,
     database: database,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    logging: false,
 })
 export const syncTables = async ()=>{
     try {

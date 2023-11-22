@@ -18,6 +18,7 @@ import transportsRoutes from "./routes/transports.routes.js"
 import usersRoutes from "./routes/users.routes.js"
 import expensesRoutes from "./routes/expenses.routes.js"
 
+import joinTravel from "./connections/joinTravel.connection.js"
 //Se crea una constante de express
 const app = express();
 const origin = process.env.ORIGIN_URL;
@@ -49,16 +50,8 @@ app.use("/api", transportsRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", expensesRoutes);
 
-/*io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-  socket.on("join_room", (data) => {
-    socket.join(data);
-    console.log(`User with ID: ${socket.id} joined room: ${data}`);
-  });
-  socket.on("send_data", (data) => {
-    socket.to(data.room).emit("receive_message", data.newData);
-  });
-});*/
+io.on("connection", joinTravel);
+
 
 //Se exporta la constante
 export default httpServer;

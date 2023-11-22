@@ -14,7 +14,9 @@ import {
   deleteTravel,
   getMyTravel,
   getSharedTravel,
-  getAllLocationTravels
+  getAllLocationTravels,
+  getAllExtras,
+  addTravelRequest
 } from '../controllers/travels.controller.js'
 
 const router = Router()
@@ -34,5 +36,9 @@ router.get('/my-travels/:id', getMyTravel)
 router.post('/my-travels', validateSchema(travelSchema), registerNewTravel)
 router.put('/my-travels/:id', validateSchema(travelSchema), editTravel)
 router.delete('/my-travels/:id', deleteTravel)
+
+router.get('/travels/extras/:id', getAllExtras)
+
+router.post('/travels/requests/new',addTravelRequest)
 
 export default router

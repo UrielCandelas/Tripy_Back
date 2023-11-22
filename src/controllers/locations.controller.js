@@ -1,4 +1,5 @@
 import Locations from "../models/locations.model.js";
+import Travel from "../models/travels.model.js";
 
 export const registerLocation = async (req, res) => {
   const { location_name, location, description, cost, schedule } = req.body;
@@ -80,6 +81,18 @@ export const deleteLocation = async (req,res)=>{
         }
         await locationFound.destroy()
         res.status(200).json(['Se ha eliminado el registro'])
+    } catch (error) {
+        res.status(500).json([`Ocurrio un Error: ${error.message}`])
+    }
+}
+
+export const getLocationByTravel = async (req,res)=>{
+    const {id} = req.params
+    try {
+        const travelFound = await Travel.findByPk(id)
+        const idLoc = travelFound.dataValues.id_location
+        const locationFound = await Locations.findByPk(idLoc)
+        res.status(200).json(locationFound)
     } catch (error) {
         res.status(500).json([`Ocurrio un Error: ${error.message}`])
     }

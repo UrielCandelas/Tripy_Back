@@ -15,9 +15,9 @@ export const getExpensesForTravel = async (req, res) => {
                 expensesFoundArr.push(expensesFound)
             }
         }
-        console.log(expensesFoundArr[2].quantity)
         res.status(200).json(expensesFoundArr);
     } catch (error) {
         res.status(500).json(["Ha ocurrido un error"]);
+        console.log(error)
     }
 }

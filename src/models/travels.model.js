@@ -46,7 +46,8 @@ const Travel = sequelize.define(
     },
     isActive:{
       type: DataTypes.BOOLEAN,
-      defaultValue: true
+      defaultValue: true,
+      allowNull: false
     }
   },
   {

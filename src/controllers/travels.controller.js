@@ -3,6 +3,7 @@ import User from '../models/auth.model.js'
 import Location from '../models/locations.model.js'
 import Extra from '../models/extraComment.model.js'
 import Expenses from '../models/expenses.model.js'
+import Request from '../models/requests.model.js'
 
 export const registerNewTravel = async (req, res) => {
   const { id_user1, id_location, travel_date, id_transportation,expense, quantity, extra, companions} =
@@ -250,7 +251,55 @@ export const getAllLocationTravels = async (req, res) => {
     const travels = await Travel.findAll({ where: { id_location: id } })
     res.status(200).json(travels)
   } catch (error) {
+    return res.status(500).json([`Ha ocurrido un error: ${error.message}`])
+  }
+}
+
+export const getAllExtras = async (req, res) => {
+  const { id } = req.params
+  try {
+    const extras = await Extra.findOne({ where: { id } })
+    res.status(200).json(extras)
+  } catch (error) {
     res.status(500).json([`Ha ocurrido un error: ${error.message}`])
   }
 }
+
+export const addTravelRequest = async(req,res)=>{
+  const {id_user1,id_user2,id_travel} = req.body;
+  try {
+    const travelFound = await Travel.findByPk(id_travel)
+    const user1Found = await User.findByPk(id_user1)
+    const user2Found = await User.findByPk(id_user2)
+    if (!user1Found) {
+      //console.log("a")
+      return res.status(404).json(['No se encontro al usuario'])
+    }
+    if (!user2Found) {
+      //console.log("b")
+      return res.status(404).json(['Tu usuario no existe'])
+    }
+    if (!travelFound) {
+      //console.log("c")
+      return res.status(404).json(['No se encontro el viaje'])
+    }
+    const requestFound = await Request.findOne({where:{id_user2: id_user2}})
+    if(requestFound){
+      console.log("paso aqui")
+      return res.status(401).json(['Ya tienes una solicitud pendiente'])
+      
+    }
+
+    const newRequest = Request.build({
+      id_user1,
+      id_user2,
+      id_travel,
+    })
+    const requestSaved = await newRequest.save()
+    res.status(200).json(requestSaved)
+  } catch (error) {
+     res.status(500).json([`Ha ocurrido un error: ${error.message}`])
+  }
+}
+
 
