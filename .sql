@@ -168,6 +168,10 @@ ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_user1`) REFERENCES `users` (`id`
 
 ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_user2`) REFERENCES `users` (`id`);
 
+<<<<<<< HEAD
 ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_travel`) REFERENCES `travels` (`id`);
 
 
+=======
+ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_travel`) REFERENCES `travels` (`id`);
+>>>>>>> 50e1e3d6a042a78e755214aa23f7f9b7991e9a0d
