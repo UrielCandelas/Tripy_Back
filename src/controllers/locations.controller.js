@@ -87,12 +87,17 @@ export const deleteLocation = async (req,res)=>{
 }
 
 export const getLocationByTravel = async (req,res)=>{
-    const {id} = req.params
+    const data = req.body;
+    const arr1 = [];
+    const arr2 = []
     try {
-        const travelFound = await Travel.findByPk(id)
+      for (let index = 0; index < data.length; index++) {
+        const travelFound = await Travel.findByPk(data[i].id_travel)
         const idLoc = travelFound.dataValues.id_location
         const locationFound = await Locations.findByPk(idLoc)
-        res.status(200).json(locationFound)
+        arr1.push(locationFound)
+      }
+      res.status(200).json(locationFound)
     } catch (error) {
         res.status(500).json([`Ocurrio un Error: ${error.message}`])
     }

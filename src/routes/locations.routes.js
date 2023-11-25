@@ -11,7 +11,7 @@ router.put("/locations/:id",validateSchema(locationSchema),editLocation)
 router.get("/locations/:id",getLocation)
 router.delete("/locations/:id",deleteLocation)
 router.get("/locations",getAllLocations)
-router.get("/locations/travel/:id",getLocationByTravel)
+router.get("/locations/travel",getLocationByTravel)
 
 
 export default router

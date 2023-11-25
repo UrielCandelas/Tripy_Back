@@ -16,7 +16,8 @@ import {
   getSharedTravel,
   getAllLocationTravels,
   getAllExtras,
-  addTravelRequest
+  addTravelRequest,
+  declineRequest,
 } from '../controllers/travels.controller.js'
 
 const router = Router()
@@ -26,7 +27,7 @@ router.get('/travels', getAllTravels)
 router.get('/travels/:id', getTravel)
 router.get('/travels/shared/:id', getSharedTravels)
 router.get('/travels/shared/one/:id', getSharedTravel)
-router.put('/travels/shared/:id', addSecondUser)
+router.put('/travels/shared', addSecondUser)
 router.put('/travels/secondShared/:id', deleteSecondUser)
 router.get('/travels/location/:id', getAllLocationTravels)
 
@@ -40,5 +41,7 @@ router.delete('/my-travels/:id', deleteTravel)
 router.get('/travels/extras/:id', getAllExtras)
 
 router.post('/travels/requests/new',addTravelRequest)
+
+router.post('/travels/requests/decline', declineRequest)
 
 export default router

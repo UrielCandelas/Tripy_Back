@@ -66,25 +66,39 @@ export const registerNewTravel = async (req, res) => {
   }
 }
 export const addSecondUser = async (req, res) => {
-  const { id } = req.params
-  const { id_user2 } = req.body
+  const { id_user2,id_travel,id_request } = req.body
   try {
     const travelFound = await Travel.findByPk(id)
     const userFound = await User.findByPk(id_user2)
     if (!travelFound || !userFound) {
       res.status(400).json(['No se encontro el viaje o el usuario'])
     }
+
     const travelUpdated = await Travel.update(
       {
         id_user2,
       },
       {
         where: {
-          id,
+          id: id_travel,
         },
       }
     )
-    res.status(200).json(travelUpdated)
+    const requestUpdated = await Request.update(
+      {
+        isActive: false
+      },{
+        where: {
+          id:id_request
+        }
+      }
+    )
+    const data = {
+      travel: travelUpdated.dataValues,
+      request: requestUpdated.dataValues
+    }
+
+    res.status(200).json(data)
   } catch (error) {
     res.status(500).json([`Ha ocurrido un error: ${error.message}`])
   }
@@ -283,11 +297,10 @@ export const addTravelRequest = async(req,res)=>{
       //console.log("c")
       return res.status(404).json(['No se encontro el viaje'])
     }
-    const requestFound = await Request.findOne({where:{id_user2: id_user2}})
+    const requestFound = await Request.findOne({where:{id_user2: id_user2,id_travel: id_travel }})
     if(requestFound){
       console.log("paso aqui")
       return res.status(401).json(['Ya tienes una solicitud pendiente'])
-      
     }
 
     const newRequest = Request.build({
@@ -300,6 +313,10 @@ export const addTravelRequest = async(req,res)=>{
   } catch (error) {
      res.status(500).json([`Ha ocurrido un error: ${error.message}`])
   }
+}
+
+export const declineRequest = async(req,res)=>{
+  
 }
 
 
