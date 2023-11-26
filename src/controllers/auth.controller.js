@@ -1,6 +1,6 @@
 //Se importan los modulos a ocupar
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 //Se importan los modelos
 import User from "../models/auth.model.js";
@@ -14,11 +14,12 @@ const SECRET_KEY = process.env.SECRET_KEY;
 //Se crea el registro de un nuevo usuario
 export const register = async (req, res) => {
   //Se obtienen un nombre un email y una contraseña del json de consulta
-  const { name,lastName,secondLastName, userName, email, password, isAdmin } = req.body;
+  const { name, lastName, secondLastName, userName, email, password, isAdmin } =
+    req.body;
   try {
     //Se busca el usuario por su correo
-    const userFound = await User.findOne({where: { email }});
-    const userNameFound = await User.findOne({where: { userName }});
+    const userFound = await User.findOne({ where: { email } });
+    const userNameFound = await User.findOne({ where: { userName } });
     if (userFound) {
       //Si se encuentra se regresa un estatus 400 de error
       return res
@@ -39,13 +40,13 @@ export const register = async (req, res) => {
       name,
       lastName,
       secondLastName,
-      userName, 
+      userName,
       email,
       password: hash,
-      isAdmin
+      isAdmin,
     });
     //Se guarda el usuario en la base de datos
-    const userSaved = await newUser.save()
+    const userSaved = await newUser.save();
     //Se crea un token con el id del usuario creado
     const token = await createAccessToken({ id: userSaved.id });
 
@@ -53,17 +54,19 @@ export const register = async (req, res) => {
     res.cookie("token", token);
     //Se envia un json con todos los datos del usuario
     res.json({
-      id: userSaved.id,
-      userName: userSaved.userName,
-      email: userSaved.email,
-      isAdmin: userSaved.isAdmin,
-      token: token,
-      createdAt: userSaved.createdAt,
+      id: userFound.id,
+      name: userFound.name,
+      lastName: userFound.lastName,
+      secondLastName: userFound.secondLastName,
+      userName: userFound.userName,
+      email: userFound.email,
+      isAdmin: userFound.isAdmin,
+      token: token
     });
   } catch (error) {
     //Se envia un estatus 500 en caso de que falle el servidor
     res.status(500).json([error.message]);
-    console.log(error.message)
+    console.log(error.message);
   }
 };
 
@@ -74,7 +77,7 @@ export const login = async (req, res) => {
 
   try {
     //Se busca si ya existe el usuario
-    const userFound = await User.findOne({where:{ email: email }});
+    const userFound = await User.findOne({ where: { email: email } });
 
     if (!userFound) {
       //Si no existe se envia un estatus 404 de que no se ha encontrado el usuario
@@ -94,11 +97,13 @@ export const login = async (req, res) => {
     //Se envia un json con todos los datos del usuario
     res.json({
       id: userFound.id,
+      name: userFound.name,
+      lastName: userFound.lastName,
+      secondLastName: userFound.secondLastName,
       userName: userFound.userName,
       email: userFound.email,
       isAdmin: userFound.isAdmin,
       token: token,
-      createdAt: userFound.createdAt,
     });
   } catch (error) {
     //Se envia un estatus 500 en caso de que falle el servidor
@@ -159,6 +164,9 @@ export const verifyToken = async (req, res) => {
     return res.json({
       id: userFound.id,
       name: userFound.name,
+      lastName: userFound.lastName,
+      secondLastName: userFound.secondLastName,
+      userName: userFound.userName,
       email: userFound.email,
       isAdmin: userFound.isAdmin,
     });
@@ -186,9 +194,11 @@ export const verifyTokenMovil = async (req, res) => {
     return res.json({
       id: userFound.id,
       name: userFound.name,
+      lastName: userFound.lastName,
+      secondLastName: userFound.secondLastName,
+      userName: userFound.userName,
       email: userFound.email,
       isAdmin: userFound.isAdmin,
     });
   });
 };
-

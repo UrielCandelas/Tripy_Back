@@ -11,7 +11,7 @@ export function createAccessToken(payload) {
         payload,
         SECRET_KEY,
         {
-          expiresIn: "1h",
+          expiresIn: "1week",
         },
         (err, token) => {
           if (err) reject(err);

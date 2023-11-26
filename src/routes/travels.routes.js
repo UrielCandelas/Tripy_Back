@@ -18,6 +18,8 @@ import {
   getAllExtras,
   addTravelRequest,
   declineRequest,
+  getTravelsI,
+  getTravelsA,
 } from '../controllers/travels.controller.js'
 
 const router = Router()
@@ -42,6 +44,10 @@ router.get('/travels/extras/:id', getAllExtras)
 
 router.post('/travels/requests/new',addTravelRequest)
 
-router.post('/travels/requests/decline', declineRequest)
+router.put('/travels/requests/decline', declineRequest)
+
+router.get('/travels/requested/inactive/:id', getTravelsI)
+
+router.get('/travels/requested/active/:id', getTravelsA)
 
 export default router
