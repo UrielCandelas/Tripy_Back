@@ -89,15 +89,6 @@ CREATE TABLE `travel_requests` (
   `updatedAt` timestamp NOT NULL
 );
 
-CREATE TABLE `locations_comments` (
-  `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `id_location` int NOT NULL,
-  `comentary_text` char(50) NOT NULL,
-  `id_userComent` int NOT NULL,
-  `createdAt` timestamp NOT NULL,
-  `updatedAt` timestamp NOT NULL
-);
-
 CREATE TABLE `chat_messages` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `id_user1` int NOT NULL,
@@ -156,10 +147,6 @@ ALTER TABLE `travel_requests` ADD FOREIGN KEY (`id_user2`) REFERENCES `users` (`
 
 ALTER TABLE `travel_requests` ADD FOREIGN KEY (`id_travel`) REFERENCES `travels` (`id`);
 
-ALTER TABLE `locations_comments` ADD FOREIGN KEY (`id_location`) REFERENCES `cat_locations` (`id`);
-
-ALTER TABLE `locations_comments` ADD FOREIGN KEY (`id_userComent`) REFERENCES `users` (`id`);
-
 ALTER TABLE `chat_messages` ADD FOREIGN KEY (`id_user1`) REFERENCES `users` (`id`);
 
 ALTER TABLE `chat_messages` ADD FOREIGN KEY (`id_user2`) REFERENCES `users` (`id`);
@@ -168,10 +155,4 @@ ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_user1`) REFERENCES `users` (`id`
 
 ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_user2`) REFERENCES `users` (`id`);
 
-<<<<<<< HEAD
 ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_travel`) REFERENCES `travels` (`id`);
-
-
-=======
-ALTER TABLE `det_expenses` ADD FOREIGN KEY (`id_travel`) REFERENCES `travels` (`id`);
->>>>>>> 50e1e3d6a042a78e755214aa23f7f9b7991e9a0d
