@@ -6,7 +6,6 @@ export const createTravelSchema = z.object({
     required_error: 'El id de la locacion es requerido',
   }),
   travel_date: z.string({ required_error: 'La fecha es requerida' }),
-  id_transportation,
   expense: z.string({ required_error: 'El gasto es requerido' }),
   quantity: z.number({ required_error: 'La cantidad es requerida' }),
   extra: z.string().optional(),
