@@ -375,72 +375,113 @@ export const getTravelsI = async (req, res) => {
   const { id } = req.params;
   const myTravels = [];
   const sharedTravels = [];
+  const expenses = [];
+  const locations = [];
+  const extras = [];
   try {
-    const travelsFoundUser1 = await Travel.findAll({where: {id_user1: id}});
-    const travelsFoundUser2 = await Travel.findAll({where: {id_user2: id}});
+    const travelsFoundUser1 = await Travel.findAll({
+      where: {
+        id_user1: id,
+        isActive: false,
+      },
+    });
+    const travelsFoundUser2 = await Travel.findAll({
+      where: {
+        id_user2: id,
+        isActive: false,
+      },
+    });
     if (!travelsFoundUser1 && !travelsFoundUser2) {
       res.status(200).json(["No hay viajes"]);
       const data = {
         travels: myTravels,
         sharedTravels: sharedTravels,
-      }
-  
+      };
       res.status(200).json(data);
     }
     for (let index = 0; index < travelsFoundUser1.length; index++) {
-      if (travelsFoundUser1[index].dataValues.isActive == false) {
-        myTravels.push(travelsFoundUser1[index].dataValues);
+      if (travelsFoundUser1[index]) {
+        const expensesFound = await Expenses.findOne({
+          where: { id: travelsFoundUser1[index].id_expenses },
+        });
+        expenses.push(expensesFound);
+        const locationFound = await Location.findByPk(
+          travelsFoundUser1[index].dataValues.id_location
+        );
+        locations.push(locationFound.dataValues);
+        const extrasFound = await Extra.findByPk(travelsFoundUser1[index].dataValues.id_extras)
+        if (extrasFound) {
+          extras.push(extrasFound.dataValues);
+        }
+        
       }
     }
-    for (let index = 0; index < travelsFoundUser2.length; index++) {
-      if (travelsFoundUser2[index].dataValues.isActive == false) {
-        sharedTravels.push(travelsFoundUser2[index].dataValues);
-      }
-    }
-
     const data = {
-      travels: myTravels,
-      sharedTravels: sharedTravels,
-    }
-
+      travels: travelsFoundUser1,
+      sharedTravels: travelsFoundUser2,
+      locations: locations,
+      expenses: expenses,
+      extras: extras,
+    };
     res.status(200).json(data);
-    
   } catch (error) {
+    console.log(error)
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
   }
 };
 export const getTravelsA = async (req, res) => {
   const { id } = req.params;
-  console.log(id)
   const myTravels = [];
   const sharedTravels = [];
+  const expenses = [];
+  const locations = [];
+  const extras = [];
   try {
-    const travelsFoundUser1 = await Travel.findAll({where: {id_user1: id}});
-    const travelsFoundUser2 = await Travel.findAll({where: {id_user2: id}});
+    const travelsFoundUser1 = await Travel.findAll({
+      where: {
+        id_user1: id,
+        isActive: true,
+      },
+    });
+    const travelsFoundUser2 = await Travel.findAll({
+      where: {
+        id_user2: id,
+        isActive: true,
+      },
+    });
     if (!travelsFoundUser1 && !travelsFoundUser2) {
       res.status(200).json(["No hay viajes"]);
       const data = {
         travels: myTravels,
         sharedTravels: sharedTravels,
-      }
+      };
       res.status(200).json(data);
     }
     for (let index = 0; index < travelsFoundUser1.length; index++) {
-      if (travelsFoundUser1[index].dataValues.isActive) {
-        myTravels.push(travelsFoundUser1[index].dataValues);
-      }
-    }
-    for (let index = 0; index < travelsFoundUser2.length; index++) {
-      if (travelsFoundUser2[index].dataValues.isActive) {
-        sharedTravels.push(travelsFoundUser2[index].dataValues);
+      if (travelsFoundUser1[index]) {
+        const expensesFound = await Expenses.findOne({
+          where: { id: travelsFoundUser1[index].id_expenses },
+        });
+        expenses.push(expensesFound);
+        const locationFound = await Location.findByPk(
+          travelsFoundUser1[index].dataValues.id_location
+        );
+        locations.push(locationFound.dataValues);
+        const extrasFound = await Extra.findByPk(travelsFoundUser1[index].dataValues.id_extras)
+        if (extrasFound) {
+          extras.push(extrasFound.dataValues);
+        }
+        
       }
     }
     const data = {
-      travels: myTravels,
-      sharedTravels: sharedTravels,
-    }
+      travels: travelsFoundUser1,
+      sharedTravels: travelsFoundUser2,
+      locations: locations,
+      expenses: expenses,
+      extras: extras,
+    };
     res.status(200).json(data);
-    
   } catch (error) {
     console.log(error)
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);

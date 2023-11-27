@@ -1,7 +1,7 @@
 //Se importa Router desde express
 import { Router } from "express";
 //Se importan todas las funciones desde controllers
-import { register,login,logout,profile,verifyToken, verifyTokenMovil } from "../controllers/auth.controller.js"
+import { register,login,logout,profile,verifyToken, verifyTokenMovil,editUserAcount } from "../controllers/auth.controller.js"
 //Se importan los middlewares
 import { authRequired } from "../middlewares/validateToken.middleware.js"
 import { validateSchema } from "../middlewares/validator.middleware.js";
@@ -23,6 +23,8 @@ router.post('/logout', logout);
 router.get('/auth/verify', verifyToken)
 
 router.post('/auth/verifyMobile', verifyTokenMovil)
+
+router.put('/auth/edit-acount', editUserAcount)
 
 
 //Exporta router y todos sus metodos

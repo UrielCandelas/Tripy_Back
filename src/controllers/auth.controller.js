@@ -54,13 +54,13 @@ export const register = async (req, res) => {
     res.cookie("token", token);
     //Se envia un json con todos los datos del usuario
     res.json({
-      id: userFound.id,
-      name: userFound.name,
-      lastName: userFound.lastName,
-      secondLastName: userFound.secondLastName,
-      userName: userFound.userName,
-      email: userFound.email,
-      isAdmin: userFound.isAdmin,
+      id: userSaved.id,
+      name: userSaved.name,
+      lastName: userSaved.lastName,
+      secondLastName: userSaved.secondLastName,
+      userName: userSaved.userName,
+      email: userSaved.email,
+      isAdmin: userSaved.isAdmin,
       token: token
     });
   } catch (error) {
@@ -202,3 +202,39 @@ export const verifyTokenMovil = async (req, res) => {
     });
   });
 };
+
+export const editUserAcount = async (req, res) => {
+  const {email,newEmail,password,newPassword,userName,id} = req.body;
+  try {
+    const userFound = await User.findOne({ where: { email } });
+    if (!userFound) {
+      return res.status(404).json(["Usuario no encontrado"]);
+    }
+    const compare = await bcrypt.compare(password, userFound.password);
+    if (compare == false) {
+      return res.status(400).json(["Contraseña incorrecta"]);
+    }
+    const hash = await bcrypt.hash(newPassword, 12);
+    const userUpdated = await User.update({
+      userName,
+      email: newEmail,
+      password: hash,
+    },{
+      where:{
+        id
+      }
+    })
+    res.status(200).json({
+      id: userUpdated.id,
+      name: userUpdated.name,
+      lastName: userUpdated.lastName,
+      secondLastName: userUpdated.secondLastName,
+      userName: userUpdated.userName,
+      email: userUpdated.email,
+      isAdmin: userUpdated.isAdmin,
+    });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json([error.message]);
+  }
+}

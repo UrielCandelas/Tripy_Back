@@ -49,6 +49,7 @@ CREATE TABLE `cat_locations` (
 CREATE TABLE `user_comments` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `comentary_text` char(50) NOT NULL,
+  `rate` decimal NOT NULL,
   `id_userComented` int NOT NULL,
   `id_userComent` int NOT NULL,
   `createdAt` timestamp NOT NULL,
