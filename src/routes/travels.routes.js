@@ -7,10 +7,7 @@ import {
   getTravel,
   getAllTravels,
   addSecondUser,
-  editTravel,
   deleteSecondUser,
-  getMyTravels,
-  getSharedTravels,
   deleteTravel,
   getMyTravel,
   getSharedTravel,
@@ -27,18 +24,15 @@ const router = Router()
 // Viajes Generales
 router.get('/travels', getAllTravels)
 router.get('/travels/:id', getTravel)
-router.get('/travels/shared/:id', getSharedTravels)
 router.get('/travels/shared/one/:id', getSharedTravel)
 router.put('/travels/shared', addSecondUser)
 router.put('/travels/secondShared/:id', deleteSecondUser)
 router.get('/travels/location/:id', getAllLocationTravels)
 
-// Mis Viajes
-router.get('/my-travels/', getMyTravels)
 router.get('/my-travels/:id', getMyTravel)
 router.post('/my-travels', validateSchema(travelSchema), registerNewTravel)
-router.put('/my-travels/:id', validateSchema(travelSchema), editTravel)
-router.delete('/my-travels/:id', deleteTravel)
+
+router.delete('/travels/:id', deleteTravel)
 
 router.get('/travels/extras/:id', getAllExtras)
 

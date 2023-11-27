@@ -66,7 +66,6 @@ export const register = async (req, res) => {
   } catch (error) {
     //Se envia un estatus 500 en caso de que falle el servidor
     res.status(500).json([error.message]);
-    console.log(error.message);
   }
 };
 
