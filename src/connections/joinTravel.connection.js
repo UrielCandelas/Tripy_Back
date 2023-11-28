@@ -3,15 +3,19 @@ import Travel from "../models/travels.model.js";
 import Location from "../models/locations.model.js";
 import User from "../models/auth.model.js";
 const joinTravel = async (socket) => {
-  const userId = socket.handshake.query.id_user1;
-  socket.id = userId;
+  const userId = socket.handshake.query.id;
+  socket.id = userId
   const arrRequest = [];
   const arrTravels = [];
   const arrLocations = [];
   const arrUsers = [];
+  if (userId == 0) {
+    socket.disconnect();
+    return;
+  }
   try {
     const requestValue = await Request.findAll({
-      where: { id_user1: socket.id },
+      where: { id_user1: userId },
     });
 
     for (let index = 0; index < requestValue.length; index++) {
@@ -35,7 +39,7 @@ const joinTravel = async (socket) => {
       travels: arrTravels,
       locations: arrLocations,
       users: arrUsers,
-    };
+    };  
     socket.emit("send_request", objData);
   } catch (error) {
     console.log(error);

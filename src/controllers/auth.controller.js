@@ -156,6 +156,7 @@ export const verifyToken = async (req, res) => {
     }
     const userFound = await User.findByPk(user.id);
     if (!userFound) {
+      console.log("aca llega")
       //Si el usuario del token no existe entonces envia un estatus 404
       return res.status(404).json(["No autorizado"]);
     }

@@ -20,7 +20,7 @@ router.post('/logout', logout);
 //Se obtiene el perfil del usuario sin antes verificar que ya este logueado 
 
 //Se verifica si el token es valido
-router.get('/auth/verify', verifyToken)
+router.post('/auth/verify', verifyToken)
 
 router.post('/auth/verifyMobile', verifyTokenMovil)
 

@@ -25,7 +25,7 @@ const origin = process.env.ORIGIN_URL;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: origin,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -51,6 +51,7 @@ app.use("/api", usersRoutes);
 app.use("/api", expensesRoutes);
 
 io.on("connection", joinTravel);
+
 
 
 //Se exporta la constante
