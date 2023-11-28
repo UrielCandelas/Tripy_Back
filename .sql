@@ -95,6 +95,7 @@ CREATE TABLE `chat_messages` (
   `id_user1` int NOT NULL,
   `id_user2` int NOT NULL,
   `message` char(255) NOT NULL,
+  `room` char(50) NOT NULL,
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL
 );
