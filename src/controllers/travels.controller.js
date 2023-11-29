@@ -22,7 +22,7 @@ export const registerNewTravel = async (req, res) => {
     const getUser = await User.findByPk(id_user1);
     const getLocation = await Location.findByPk(id_location);
     if (!getLocation || !getUser) {
-      console.log("asa")
+      console.log("asa");
       return res.status(400).json(["No se encontro el usuario o la ubicacion"]);
     }
     if (quantity) {
@@ -204,7 +204,6 @@ export const deleteSecondUser = async (req, res) => {
   }
 };
 
-
 export const deleteTravel = async (req, res) => {
   const { id } = req.params;
   try {
@@ -212,13 +211,16 @@ export const deleteTravel = async (req, res) => {
     if (!travelFound) {
       res.status(400).json(["No se encontro el viaje"]);
     }
-    const travelUpdated = await Travel.update({
-      isActive: false
-    },{
-      where:{
-        id
+    const travelUpdated = await Travel.update(
+      {
+        isActive: false,
+      },
+      {
+        where: {
+          id,
+        },
       }
-    })
+    );
     res.status(200).json(`Se ha eliminado el viaje`);
   } catch (error) {
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
@@ -392,11 +394,12 @@ export const getTravelsI = async (req, res) => {
           travelsFoundUser1[index].dataValues.id_location
         );
         locations.push(locationFound.dataValues);
-        const extrasFound = await Extra.findByPk(travelsFoundUser1[index].dataValues.id_extras)
+        const extrasFound = await Extra.findByPk(
+          travelsFoundUser1[index].dataValues.id_extras
+        );
         if (extrasFound) {
           extras.push(extrasFound.dataValues);
         }
-        
       }
     }
     const data = {
@@ -405,10 +408,10 @@ export const getTravelsI = async (req, res) => {
       locations: locations,
       expenses: expenses,
       extras: extras,
-    }
+    };
     res.status(200).json(data);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
   }
 };
@@ -422,6 +425,8 @@ export const getTravelsA = async (req, res) => {
   const expenses2 = [];
   const locations2 = [];
   const extras2 = [];
+  const usersU1 = [];
+  const usersU2 = [];
   try {
     const travelsFoundUser1 = await Travel.findAll({
       where: {
@@ -453,11 +458,16 @@ export const getTravelsA = async (req, res) => {
           travelsFoundUser1[index].dataValues.id_location
         );
         locations1.push(locationFound.dataValues);
-        const extrasFound = await Extra.findByPk(travelsFoundUser1[index].dataValues.id_extras)
+        const extrasFound = await Extra.findByPk(
+          travelsFoundUser1[index].dataValues.id_extras
+        );
         if (extrasFound) {
           extras1.push(extrasFound.dataValues);
         }
-        
+        const usersFound = await User.findByPk(
+          travelsFoundUser1[index].dataValues.id_user2
+        );
+        usersU1.push(usersFound.dataValues);
       }
     }
     for (let index = 0; index < travelsFoundUser2.length; index++) {
@@ -470,26 +480,33 @@ export const getTravelsA = async (req, res) => {
           travelsFoundUser2[index].dataValues.id_location
         );
         locations2.push(locationFound.dataValues);
-        const extrasFound = await Extra.findByPk(travelsFoundUser2[index].dataValues.id_extras)
+        const extrasFound = await Extra.findByPk(
+          travelsFoundUser2[index].dataValues.id_extras
+        );
         if (extrasFound) {
           extras2.push(extrasFound.dataValues);
         }
-        
+        const usersFound = await User.findByPk(
+          travelsFoundUser1[index].dataValues.id_user2
+        );
+        usersU2.push(usersFound.dataValues);
       }
     }
     const data = {
       travels: travelsFoundUser1,
+      usersU1: usersU1,
       sharedTravels: travelsFoundUser2,
       locations_user1: locations1,
       expenses_user1: expenses1,
       extras_user1: extras1,
       locations_user2: locations2,
       expenses_user2: expenses2,
+      usersU2: usersU2,
       extras_user2: extras2,
     };
     res.status(200).json(data);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
   }
 };

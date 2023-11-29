@@ -16,7 +16,6 @@ router.get("/user/:id", getUserById);
 router.get("/user/request/:id", getUsersByRequest);
 router.post(
   "/user/commentary",
-  validateSchema(commentarySchema),
   registerNewCommentary
 );
 router.get("/user/commentary/all-commentaries/:id",getComentariesByID);

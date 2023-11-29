@@ -11,7 +11,7 @@ const Commentary = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    commentary_text: {
+    comentary_text: {
       type: DataTypes.CHAR(50),
       allowNull: false,
     },

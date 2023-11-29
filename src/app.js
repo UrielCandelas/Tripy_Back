@@ -67,7 +67,6 @@ io.on("connection", async (socket) => {
   const arrChatMessages = [];
   const contacts = [];
   let helpArray = [];
-  const arrUserInChat = [];
   if (userId == 0) {
     socket.disconnect();
     return;

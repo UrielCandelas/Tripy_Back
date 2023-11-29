@@ -47,7 +47,7 @@ export const registerNewCommentary = async (req, res) => {
   const { commentary_text, id_userComented, id_userComent, rate } = req.body;
   try {
     const newCommentary = Commentary.build({
-        commentary_text,
+      comentary_text: commentary_text,
         id_userComented,
         id_userComent,
         rate,
@@ -55,19 +55,22 @@ export const registerNewCommentary = async (req, res) => {
     const commentarySaved = await newCommentary.save()
     res.status(200).json(commentarySaved)
   } catch (error) {
+    console.log(error)
     res.status(500).json(["Ha ocurrido un error"]);
   }
 };
 
 export const getComentariesByID = async (req, res) => {
     const { id } = req.params
+    console.log(id)
     const arrUsers = []
     const arrCommentaries = []
     try {
         const commentariesFound = await Commentary.findAll({ where: { id_userComented: id } })
-        for (let index = 0; index < commentariesFound.length; index++) {
+        if (commentariesFound.length > 0) {
+          for (let index = 0; index < commentariesFound.length; index++) {
             arrCommentaries.push(commentariesFound[index].dataValues)
-            const userFound = await User.findByPk(arrUsers[index].id_userComent)
+            const userFound = await User.findByPk(arrCommentaries[index].id_userComent)
             arrUsers.push(userFound.dataValues)
         }
         const data= {
@@ -75,7 +78,13 @@ export const getComentariesByID = async (req, res) => {
            commentaries: arrCommentaries 
         }
         res.status(200).json(data)
+          
+        }else {
+          res.status(200).json([])
+        }
+        
     } catch (error) {
+      console.log(error)
      res.status(500).json(["Ha ocurrido un error"]);   
     }
 }
