@@ -21,4 +21,5 @@ router.post(
 );
 router.get("/user/commentary/all-commentaries/:id",getComentariesByID);
 
+
 export default router;

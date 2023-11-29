@@ -22,6 +22,7 @@ export const registerNewTravel = async (req, res) => {
     const getUser = await User.findByPk(id_user1);
     const getLocation = await Location.findByPk(id_location);
     if (!getLocation || !getUser) {
+      console.log("asa")
       return res.status(400).json(["No se encontro el usuario o la ubicacion"]);
     }
     if (quantity) {

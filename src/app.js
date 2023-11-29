@@ -19,12 +19,12 @@ import { Server } from "socket.io";
 //Se importan los modulos del sistema
 import authRoutes from "./routes/auth.routes.js";
 import locationRoutes from "./routes/locations.routes.js";
-import travelRoutes from "./routes/travels.routes.js"
-import transportsRoutes from "./routes/transports.routes.js"
-import usersRoutes from "./routes/users.routes.js"
-import expensesRoutes from "./routes/expenses.routes.js"
+import travelRoutes from "./routes/travels.routes.js";
+import transportsRoutes from "./routes/transports.routes.js";
+import usersRoutes from "./routes/users.routes.js";
+import expensesRoutes from "./routes/expenses.routes.js";
 
-import joinTravel from "./connections/joinTravel.connection.js"
+import joinTravel from "./connections/joinTravel.connection.js";
 //Se crea una constante de express
 const app = express();
 const origin = process.env.ORIGIN_URL;
@@ -59,6 +59,7 @@ app.use("/api", expensesRoutes);
 io.on("connection", async (socket) => {
   const userId = socket.handshake.query.id;
   socket.id = userId;
+  socket.room = 0;
   const arrRequest = [];
   const arrTravels = [];
   const arrLocations = [];
@@ -103,80 +104,63 @@ io.on("connection", async (socket) => {
     socket.emit("send_request", objData);
 
     //obtener contactos
-      const travelFoundU1 = await Travel.findAll({
-        where: { id_user1: socket.id },
-      });
-      const travelFoundU2 = await Travel.findAll({
-        where: { id_user2: socket.id },
-      });
-      for (let index = 0; index < travelFoundU1.length; index++) {
-        if (travelFoundU1[index]) {
-          const userFound = await User.findByPk(travelFoundU1[index].id_user2);
-          if(userFound){
-            const dataContactsU1 = {
-              id: userFound.dataValues.id,
-              name: userFound.dataValues.name,
-              userName: userFound.dataValues.userName,
-              lastName: userFound.dataValues.lastName,
-              email: userFound.dataValues.email,
-            };
-            contacts.push(dataContactsU1);
-          }
+    const travelFoundU1 = await Travel.findAll({
+      where: { id_user1: socket.id },
+    });
+    const travelFoundU2 = await Travel.findAll({
+      where: { id_user2: socket.id },
+    });
+    for (let index = 0; index < travelFoundU1.length; index++) {
+      if (travelFoundU1[index]) {
+        const userFound = await User.findByPk(travelFoundU1[index].id_user2);
+        if (userFound) {
+          const dataContactsU1 = {
+            id: userFound.dataValues.id,
+            name: userFound.dataValues.name,
+            userName: userFound.dataValues.userName,
+            lastName: userFound.dataValues.lastName,
+            email: userFound.dataValues.email,
+          };
+          contacts.push(dataContactsU1);
         }
       }
-      for (let index = 0; index < travelFoundU2.length; index++) {
-        if (travelFoundU2[index]) {
-          const userFound = await User.findByPk(travelFoundU2[index].id_user1);
-          if (userFound) {
-            const dataContactsU2 = {
-              id: userFound.dataValues.id,
-              name: userFound.dataValues.name,
-              userName: userFound.dataValues.userName,
-              lastName: userFound.dataValues.lastName,
-              email: userFound.dataValues.email,
-            };
-            contacts.push(dataContactsU2);
-          }
+    }
+    for (let index = 0; index < travelFoundU2.length; index++) {
+      if (travelFoundU2[index]) {
+        const userFound = await User.findByPk(travelFoundU2[index].id_user1);
+        if (userFound) {
+          const dataContactsU2 = {
+            id: userFound.dataValues.id,
+            name: userFound.dataValues.name,
+            userName: userFound.dataValues.userName,
+            lastName: userFound.dataValues.lastName,
+            email: userFound.dataValues.email,
+          };
+          contacts.push(dataContactsU2);
         }
       }
-      helpArray = contacts;
-      for (let index = 0; index < helpArray.length; index++) {
-        if (helpArray[index].id == contacts[index].id) {
-          contacts.splice(index, 1);
-        }
+    }
+    helpArray = contacts;
+    for (let index = 0; index < helpArray.length; index++) {
+      if (helpArray[index].id == contacts[index].id) {
+        contacts.splice(index, 1);
       }
+    }
     socket.emit("send_contacts", contacts);
-    
-    
 
     //enviar mensajes
     socket.on("joinRoom", async (data) => {
-      socket.join(data.room)
-      const roomFound = await Chat.findAll({
-        where: { rooms: data.room },
-      });
-      if (roomFound.length > 0) {
-        console.log("entro al if")
-        for (let index = 0; index < roomFound.length; index++) {
-          arrChatMessages.push(roomFound[index].dataValues);
-        }
-        socket.emit("previous_messages", arrChatMessages);
-      }
-      //socket.emit("previous_messages", objData2);
+      socket.join(data.room);
+      socket.room = data.room;
+      console.log(socket.room)
     });
 
     socket.on("sendMessage", async (data) => {
-      console.log("llega el mensaje")
+      console.log("llega el mensaje");
       try {
-        const newChat = Chat.build({
-          id_user1: socket.id,
-          id_user2: data.id_user2,
-          rooms: data.room,
-          message: data.message,
-        });
-        //await newChat.save();
-        console.log(data.message)
-        socket.broadcast.to(data.room).emit("receive_message", data.message)
+        console.log(data.message);
+        arrChatMessages.push(data.message);
+        socket.to(data.room).emit("receive_message", data.message);
       } catch (error) {
         console.log(error);
       }
@@ -185,8 +169,6 @@ io.on("connection", async (socket) => {
     console.log(error);
   }
 });
-
-
 
 //Se exporta la constante
 export default httpServer;
