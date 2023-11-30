@@ -39,7 +39,7 @@ const io = new Server(httpServer, {
 //Se usan los modulos que importamos
 app.use(
   cors({
-    origin: origin,
+    origin: "exp://192.168.168.248:8081",
     credentials: true,
   })
 );

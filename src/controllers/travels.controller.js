@@ -487,7 +487,7 @@ export const getTravelsA = async (req, res) => {
           extras2.push(extrasFound.dataValues);
         }
         const usersFound = await User.findByPk(
-          travelsFoundUser1[index].dataValues.id_user2
+          travelsFoundUser2[index].dataValues.id_user2
         );
         usersU2.push(usersFound.dataValues);
       }
