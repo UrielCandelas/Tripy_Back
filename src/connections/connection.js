@@ -19,21 +19,28 @@ const connection = async (socket) => {
   });
 
   socket.on("get_messages", async (data) => {
-    if (!socket.recovered) {
       try {
         const res = await Chat.findAll({
-          where: { id: { [Op.gt]: socket.handshake.auth.serverOffset }, id_user1: data.id_user, id_user2: data.id_user2 },
+          where: {
+            [Op.or]: [
+              {
+                id_user1: data.id_user1,
+                id_user2: data.id_user2,
+              },
+              {
+                id_user1: data.id_user2,
+                id_user2: data.id_user1,
+              },
+            ],
+          },
         });
-        res.map((message , i)=>{
-          socket.emit("message", message.message);
-        })
+        socket.emit("send_messages", res);
       } catch (error) {
-        console.log(error)
+        return console.log(error);
       }
-    }
-  })
-
-  socket.on("get_request", async (data) => {
+  });
+    
+  socket.on("get_requests", async (data) => {
     const id_user1 = data.id_user1;
     try {
       const requestValue = await Request.findAll({
@@ -68,13 +75,13 @@ const connection = async (socket) => {
     } catch (error) {
       console.log(error);
     }
-  });
+  })
   socket.on("get_contacts", async (data) => {
     const travelFoundU1 = await Travel.findAll({
-      where: { id_user1: data.id_user },
+      where: { id_user1: data.id_user1 },
     });
     const travelFoundU2 = await Travel.findAll({
-      where: { id_user2: data.id_user },
+      where: { id_user2: data.id_user1 },
     });
     for (let index = 0; index < travelFoundU1.length; index++) {
       if (travelFoundU1[index]) {
@@ -106,14 +113,19 @@ const connection = async (socket) => {
         }
       }
     }
-    helpArray = contacts;
-    for (let index = 0; index < helpArray.length; index++) {
-      if (helpArray[index].id == contacts[index].id) {
-        contacts.splice(index, 1);
+    const uniqueContacts = contacts.reduce((unique, contact) => {
+      // Verificar si ya existe un elemento con el mismo id en el array filtrado
+      const existingContact = unique.find((item) => item.id === contact.id);
+  
+      // Si no existe, agregarlo al array filtrado
+      if (!existingContact) {
+        unique.push(contact);
       }
-    }
-    socket.emit("send_contacts", contacts);
-  });
+  
+      return unique;
+    }, []);
+    socket.emit("send_contacts", uniqueContacts);
+  })
   socket.on("joinRoom", async (data) => {
     socket.join(data.room);
     socket.room = data.room;
@@ -127,8 +139,8 @@ const connection = async (socket) => {
         id_user2: data.id_user2,
         id_travel: data.id_travel,
         message: data.message,
-      })
-      const messageSaved = await res.save();
+      });
+      const messageSaved = await newMessage.save();
       socket.to(data.room).emit("receive_message", messageSaved.message);
     } catch (error) {
       console.log(error);

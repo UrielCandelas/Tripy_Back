@@ -29,7 +29,7 @@ const io = new Server(httpServer, {
     origin: origin,
     methods: ["GET", "POST"],
   },
-  connectionStateRecovery:{}
+  transports: ['websocket'],
 });
 
 //Se usan los modulos que importamos
