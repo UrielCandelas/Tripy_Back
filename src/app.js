@@ -1,7 +1,7 @@
 //Se importa las variables del entorno
 import "dotenv/config";
 
-import connection from "./connections/connection.js";
+//import connection from "./connections/connection.js";
 
 //Se importan los modulos del sistema
 import express from "express";
@@ -27,7 +27,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: origin,
-    methods: ["GET", "POST"],
+    credentials: true,
   },
   transports: ['websocket'],
 });
@@ -52,7 +52,70 @@ app.use("/api", transportsRoutes);
 app.use("/api", usersRoutes);
 app.use("/api", expensesRoutes);
 
-io.on("connection",connection);
+global.onlineUsers = new Map();
+
+io.on("connection", async (socket) => {
+  global.chatSocket = socket;
+
+  socket.on("add-user", (userID)=>{
+    onlineUsers.set(userID, socket.id)
+  })
+  socket.on("send-msg", (data)=>{
+    const sendUserSocket = onlineUsers.get(data.to)
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data.message)
+    }
+  })
+  const arrRequest = [];
+  const arrTravels = [];
+  const arrLocations = [];
+  const arrUsers = [];
+  const arrChatMessages = [];
+  const contacts = [];
+  let helpArray = [];
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
+
+  socket.on("get_requests", async (data) => {
+    const id_user1 = data.id_user1;
+    try {
+      const requestValue = await Request.findAll({
+        where: { id_user1: id_user1 },
+      });
+
+      for (let index = 0; index < requestValue.length; index++) {
+        arrRequest.push(requestValue[index].dataValues);
+        //console.log(requestValue[index].dataValues.id_travel)
+        const requestTravel = await Travel.findByPk(
+          requestValue[index].dataValues.id_travel
+        );
+        arrTravels.push(requestTravel.dataValues);
+
+        const requestLocation = await Location.findByPk(
+          requestTravel.dataValues.id_location
+        );
+        arrLocations.push(requestLocation.dataValues);
+
+        const requestUser = await User.findByPk(
+          requestValue[index].dataValues.id_user2
+        );
+        arrUsers.push(requestUser.dataValues);
+      }
+      const objData = {
+        request: arrRequest,
+        travels: arrTravels,
+        locations: arrLocations,
+        users: arrUsers,
+      };
+      socket.emit("send_request", objData);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+});
 
 //Se exporta la constante
 export default httpServer;

@@ -446,7 +446,7 @@ export const getTravelsA = async (req, res) => {
         travels: myTravels,
         sharedTravels: sharedTravels,
       };
-      res.status(200).json(data);
+      return res.status(200).json(data);
     }
     for (let index = 0; index < travelsFoundUser1.length; index++) {
       if (travelsFoundUser1[index]) {
@@ -467,7 +467,9 @@ export const getTravelsA = async (req, res) => {
         const usersFound = await User.findByPk(
           travelsFoundUser1[index].dataValues.id_user2
         );
-        usersU1.push(usersFound.dataValues);
+        if (usersFound) {
+          usersU1.push(usersFound.dataValues);
+        }
       }
     }
     for (let index = 0; index < travelsFoundUser2.length; index++) {
@@ -487,9 +489,11 @@ export const getTravelsA = async (req, res) => {
           extras2.push(extrasFound.dataValues);
         }
         const usersFound = await User.findByPk(
-          travelsFoundUser2[index].dataValues.id_user2
+          travelsFoundUser2[index].dataValues.id_user1
         );
-        usersU2.push(usersFound.dataValues);
+        if (usersFound) {
+          usersU2.push(usersFound.dataValues);
+        }
       }
     }
     const data = {

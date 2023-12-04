@@ -3,6 +3,8 @@ import User from "../models/auth.model.js";
 import Travel from "../models/travels.model.js";
 import Request from "../models/requests.model.js";
 import Commentary from "../models/commentary.model.js";
+import { Op } from "sequelize";
+import Chat from "../models/chat.model.js";
 
 export const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -87,4 +89,91 @@ export const getComentariesByID = async (req, res) => {
       console.log(error)
      res.status(500).json(["Ha ocurrido un error"]);   
     }
+}
+
+export const getContacts = async (req, res) => {
+  const { id } = req.params;
+  const contacts = []
+  try {
+    const travelFoundU1 = await Travel.findAll({
+      where: { id_user1: id },
+    });
+    const travelFoundU2 = await Travel.findAll({
+      where: { id_user2: id },
+    });
+    for (let index = 0; index < travelFoundU1.length; index++) {
+      if (travelFoundU1[index]) {
+        const userFound = await User.findByPk(travelFoundU1[index].id_user2);
+        if (userFound) {
+          const dataContactsU1 = {
+            id: userFound.dataValues.id,
+            name: userFound.dataValues.name,
+            userName: userFound.dataValues.userName,
+            lastName: userFound.dataValues.lastName,
+            email: userFound.dataValues.email,
+          };
+          contacts.push(dataContactsU1);
+        }
+      }
+    }
+    for (let index = 0; index < travelFoundU2.length; index++) {
+      if (travelFoundU2[index]) {
+        const userFound = await User.findByPk(travelFoundU2[index].id_user1);
+        if (userFound) {
+          const dataContactsU2 = {
+            id: userFound.dataValues.id,
+            name: userFound.dataValues.name,
+            userName: userFound.dataValues.userName,
+            lastName: userFound.dataValues.lastName,
+            email: userFound.dataValues.email,
+          };
+          contacts.push(dataContactsU2);
+        }
+      }
+    }
+    const uniqueContacts = contacts.reduce((unique, contact) => {
+      const existingContact = unique.find((item) => item.id === contact.id);
+      if (!existingContact) {
+        unique.push(contact);
+      }
+      return unique;
+    }, []);
+    res.status(200).json(uniqueContacts);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(["Ha ocurrido un error"]);
+  }
+}
+
+export const getMessages = async (req, res) => {
+  const { id_user1, id_user2 } = req.body;
+  try {
+    console.log(id_user1, id_user2)
+    const messages = await Chat.findAll({
+      where: {
+       users: [id_user1, id_user2],
+      },
+    });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json(["Ha ocurrido un error"]);
+  }
+}
+
+export const registerNewMessage = async (req, res) => {
+  const { id_user1, id_user2, message } = req.body;
+  try {
+    const newMessage = Chat.build({
+      id_user1,
+      id_user2,
+      users: [id_user1, id_user2],
+      message,
+    });
+    const messageSaved = await newMessage.save();
+    res.status(200).json(messageSaved);
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(["Ha ocurrido un error"]);
+  }
 }

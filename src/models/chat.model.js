@@ -22,9 +22,8 @@ const Chat = sequelize.define(
       type: DataTypes.CHAR(255),
       allowNull: false,
     },
-    room:{
-      type: DataTypes.CHAR(50),
-      allowNull: false,
+    users:{
+      type: DataTypes.JSON,
     }
   },
   {
