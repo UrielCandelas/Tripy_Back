@@ -69,14 +69,6 @@ io.on("connection", async (socket) => {
   const arrTravels = [];
   const arrLocations = [];
   const arrUsers = [];
-  const arrChatMessages = [];
-  const contacts = [];
-  let helpArray = [];
-
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-
 
   socket.on("get_requests", async (data) => {
     const id_user1 = data.id_user1;
