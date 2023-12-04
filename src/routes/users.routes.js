@@ -30,7 +30,7 @@ router.get("/user/contacts/:id",getContacts);
 
 router.post("/user/message", registerNewMessage);
 
-router.get("/user/messages", getMessages);
+router.post("/user/get/messages", getMessages);
 
 
 export default router;

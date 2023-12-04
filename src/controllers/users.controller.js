@@ -3,7 +3,7 @@ import User from "../models/auth.model.js";
 import Travel from "../models/travels.model.js";
 import Request from "../models/requests.model.js";
 import Commentary from "../models/commentary.model.js";
-import { Op } from "sequelize";
+import { Op,literal } from "sequelize";
 import Chat from "../models/chat.model.js";
 
 export const getUserById = async (req, res) => {
@@ -148,14 +148,19 @@ export const getContacts = async (req, res) => {
 export const getMessages = async (req, res) => {
   const { id_user1, id_user2 } = req.body;
   try {
-    console.log(id_user1, id_user2)
     const messages = await Chat.findAll({
-      where: {
-       users: [id_user1, id_user2],
-      },
+      where: literal(`JSON_CONTAINS(users, '[${id_user1}, ${id_user2}]')`),
+      order: [['updatedAt', 'ASC']],
     });
-    res.status(200).json(messages);
+    const PMessages = messages.map((message) => {
+      return {
+        fromSelf: message.dataValues.id_user1 === id_user1,
+        message: message.dataValues.message,
+      };
+    })
+    res.status(200).json(PMessages);
   } catch (error) {
+    console.log(error.message)
     res.status(500).json(["Ha ocurrido un error"]);
   }
 }
@@ -169,6 +174,7 @@ export const registerNewMessage = async (req, res) => {
       users: [id_user1, id_user2],
       message,
     });
+    console.log(newMessage)
     const messageSaved = await newMessage.save();
     res.status(200).json(messageSaved);
     

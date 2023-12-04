@@ -29,7 +29,6 @@ const io = new Server(httpServer, {
     origin: origin,
     credentials: true,
   },
-  transports: ['websocket'],
 });
 
 //Se usan los modulos que importamos
@@ -56,16 +55,16 @@ global.onlineUsers = new Map();
 
 io.on("connection", async (socket) => {
   global.chatSocket = socket;
+  socket.on("add-user", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
 
-  socket.on("add-user", (userID)=>{
-    onlineUsers.set(userID, socket.id)
-  })
-  socket.on("send-msg", (data)=>{
-    const sendUserSocket = onlineUsers.get(data.to)
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", data.message)
+      socket.to(sendUserSocket).emit("msg-recieve", data.message);
     }
-  })
+  });
   const arrRequest = [];
   const arrTravels = [];
   const arrLocations = [];
