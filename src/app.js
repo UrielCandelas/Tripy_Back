@@ -65,47 +65,14 @@ io.on("connection", async (socket) => {
       socket.to(sendUserSocket).emit("msg-recieve", data.message);
     }
   });
-  const arrRequest = [];
-  const arrTravels = [];
-  const arrLocations = [];
-  const arrUsers = [];
 
-  socket.on("get_requests", async (data) => {
-    const id_user1 = data.id_user1;
-    try {
-      const requestValue = await Request.findAll({
-        where: { id_user1: id_user1 },
-      });
-
-      for (let index = 0; index < requestValue.length; index++) {
-        arrRequest.push(requestValue[index].dataValues);
-        //console.log(requestValue[index].dataValues.id_travel)
-        const requestTravel = await Travel.findByPk(
-          requestValue[index].dataValues.id_travel
-        );
-        arrTravels.push(requestTravel.dataValues);
-
-        const requestLocation = await Location.findByPk(
-          requestTravel.dataValues.id_location
-        );
-        arrLocations.push(requestLocation.dataValues);
-
-        const requestUser = await User.findByPk(
-          requestValue[index].dataValues.id_user2
-        );
-        arrUsers.push(requestUser.dataValues);
-      }
-      const objData = {
-        request: arrRequest,
-        travels: arrTravels,
-        locations: arrLocations,
-        users: arrUsers,
-      };
-      socket.emit("send_request", objData);
-    } catch (error) {
-      console.log(error);
+  socket.on("send-requests", (data)=>{
+    const sendUserSocket = onlineUsers.get(data.id);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("get-requests", data.req);
     }
-  });
+  })
+  
 });
 
 //Se exporta la constante

@@ -78,14 +78,14 @@ export const addSecondUser = async (req, res) => {
   try {
     const travelFound = await Travel.findByPk(id_travel);
     const userFound = await User.findByPk(id_user2);
-    const requestFound = await Request.findAll({
+    const requestFound = await Request.findOne({
       where: { id_travel: id_travel, isActive: true },
     });
 
     if (!travelFound || !userFound) {
-      res.status(400).json(["No se encontro el viaje o el usuario"]);
+      return res.status(400).json(["No se encontro el viaje o el usuario"]);
     }
-    if (travelFound.dataValues.id_user2 != null) {
+    if (requestFound.dataValues.isActive === false) {
       return res
         .status(401)
         .json(["Ya se acepto la solicitud para este viaje"]);
@@ -327,7 +327,24 @@ export const addTravelRequest = async (req, res) => {
       id_travel,
     });
     const requestSaved = await newRequest.save();
-    res.status(200).json(requestSaved);
+
+    const requestTravel = await Travel.findByPk(
+      requestSaved.dataValues.id_travel
+    );
+    const requestLocation = await Location.findByPk(
+      requestTravel.dataValues.id_location
+    );
+
+    const requestUser = await User.findByPk(requestSaved.dataValues.id_user2);
+    
+    const objData = {
+      request: requestSaved,
+      travel: requestTravel,
+      locations: requestLocation,
+      users: requestUser,
+    };
+
+    res.status(200).json(objData);
   } catch (error) {
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
   }
@@ -512,5 +529,45 @@ export const getTravelsA = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json([`Ha ocurrido un error: ${error.message}`]);
+  }
+};
+
+export const getRequest = async (req, res) => {
+  const { id } = req.params;
+  const arrRequest = [];
+  const arrTravels = [];
+  const arrLocations = [];
+  const arrUsers = [];
+  try {
+    const requestValue = await Request.findAll({
+      where: { id_user1: id, isActive: true },
+    });
+
+    for (let index = 0; index < requestValue.length; index++) {
+      arrRequest.push(requestValue[index].dataValues);
+      const requestTravel = await Travel.findByPk(
+        requestValue[index].dataValues.id_travel
+      );
+      arrTravels.push(requestTravel.dataValues);
+
+      const requestLocation = await Location.findByPk(
+        requestTravel.dataValues.id_location
+      );
+      arrLocations.push(requestLocation.dataValues);
+
+      const requestUser = await User.findByPk(
+        requestValue[index].dataValues.id_user2
+      );
+      arrUsers.push(requestUser.dataValues);
+    }
+    const objData = {
+      request: arrRequest,
+      travels: arrTravels,
+      locations: arrLocations,
+      users: arrUsers,
+    };
+    res.status(200).json(objData);
+  } catch (error) {
+    console.log(error);
   }
 };

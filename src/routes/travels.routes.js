@@ -17,6 +17,7 @@ import {
   declineRequest,
   getTravelsI,
   getTravelsA,
+  getRequest,
 } from '../controllers/travels.controller.js'
 
 const router = Router()
@@ -43,5 +44,7 @@ router.put('/travels/requests/decline', declineRequest)
 router.get('/travels/requested/inactive/:id', getTravelsI)
 
 router.get('/travels/requested/active/:id', getTravelsA)
+
+router.get("/request/get/:id",getRequest)
 
 export default router
