@@ -34,7 +34,7 @@ const io = new Server(httpServer, {
 //Se usan los modulos que importamos
 app.use(
   cors({
-    origin: origin,
+    origin: "*",
     credentials: true,
   })
 );
