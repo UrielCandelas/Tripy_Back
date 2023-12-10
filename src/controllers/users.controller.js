@@ -174,7 +174,6 @@ export const registerNewMessage = async (req, res) => {
       users: [id_user1, id_user2],
       message,
     });
-    console.log(newMessage)
     const messageSaved = await newMessage.save();
     res.status(200).json(messageSaved);
     

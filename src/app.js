@@ -22,19 +22,29 @@ import expensesRoutes from "./routes/expenses.routes.js";
 
 //Se crea una constante de express
 const app = express();
-const origin = process.env.ORIGIN_URL;
+//const origin = process.env.ORIGIN_URL;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: origin,
+    origin: "*",
     credentials: true,
   },
 });
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "exp://192.168.0.10:8081"
+]
 //Se usan los modulos que importamos
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
