@@ -33,7 +33,8 @@ const io = new Server(httpServer, {
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "exp://192.168.0.10:8081"
+  "exp://192.168.0.10:8081",
+  "http://localhost:19006"
 ]
 //Se usan los modulos que importamos
 app.use(
