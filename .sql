@@ -3,53 +3,17 @@ create database if not exists tripy_db;
 
 use tripy_db;
 
-select
-  *
-from
-  travels;
-
-select
-  *
-from
-  cat_transport;
-
-select
-  *
-from
-  users;
-
-select
-  *
-from
-  det_extras;
-
-select
-  *
-from
-  cat_locations;
-
-select
-  *
-from
-  chat_messages;
-
+select * from travels;
+select * from cat_transport;
+select * from users;
+select * from det_extras;
+select * from cat_locations;
+select * from chat_messages;
 /*select * from det_activities;*/
-select
-  *
-from
-  det_expenses;
-
+select * from det_expenses;
 /*select * from locations_comments;*/
-select
-  *
-from
-  travel_requests;
-
-select
-  *
-from
-  user_comments;
-
+select * from travel_requests;
+select * from user_comments;
 CREATE TABLE `users` (
   `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `email` char(40) NOT NULL,
